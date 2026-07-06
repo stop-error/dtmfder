@@ -1,17 +1,28 @@
 package main
 
 import (
-  "net/http"
+	"net/http"
 
-  "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
+	"github.com/twilio/twilio-go/twiml"
 )
 
 func main() {
-  r := gin.Default()
-  r.GET("/ping", func(c *gin.Context) {
-    c.JSON(http.StatusOK, gin.H{
-      "message": "pong",
-    })
-  })
-  r.Run() // listen and serve on localhost:8080
+	router := gin.Default()
+
+	router.POST("/answer", func(context *gin.Context) {
+		say := &twiml.VoiceSay{
+			Message: "Hello from your pals at Twilio! Have fun.",
+		}
+
+		twimlResult, err := twiml.Voice([]twiml.Element{say})
+		if err != nil {
+			context.String(http.StatusInternalServerError, err.Error())
+		} else {
+			context.Header("Content-Type", "text/xml")
+			context.String(http.StatusOK, twimlResult)
+		}
+	})
+
+	router.Run(":1337")
 }
