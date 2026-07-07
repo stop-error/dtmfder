@@ -11,11 +11,8 @@ func main() {
 	router := gin.Default()
 
 	router.POST("/answer", func(context *gin.Context) {
-		say := &twiml.VoiceSay{
-			Message: "Hello from your pals at Twilio! Have fun.",
-		}
 
-		twimlResult, err := twiml.Voice([]twiml.Element{say})
+		twimlResult, err := twiml.Voice([]twiml.Element{ivrGreeting1})
 		if err != nil {
 			context.String(http.StatusInternalServerError, err.Error())
 		} else {
