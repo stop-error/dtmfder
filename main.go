@@ -1,24 +1,22 @@
 package main
 
 import (
-	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/twilio/twilio-go/twiml"
+	"github.com/rs/zerolog"
 )
 
 func main() {
+
+	Logger := zerolog.New(os.Stdout).With().Caller().Logger()
+
 	router := gin.Default()
 
 	router.POST("/answer", func(context *gin.Context) {
 
-		twimlResult, err := twiml.Voice([]twiml.Element{ivrGreeting1})
-		if err != nil {
-			context.String(http.StatusInternalServerError, err.Error())
-		} else {
-			context.Header("Content-Type", "text/xml")
-			context.String(http.StatusOK, twimlResult)
-		}
+		playMessage(context, &Logger, messageStrings["greeting"])
+
 	})
 
 	router.Run(":443")
